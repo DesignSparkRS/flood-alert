@@ -1,6 +1,6 @@
 // Your WiFi settings
-#define SECRET_SSID "AIRQUALITY"
-#define SECRET_PASS "man0nthem00n"
+#define SECRET_SSID "XXXX"
+#define SECRET_PASS "XXXX"
 
 // Your flood area code from Gov.co.uk Flood Warning Service
 #define AREA_CODE "061WAF10Windrush"
