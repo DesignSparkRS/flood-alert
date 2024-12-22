@@ -139,7 +139,7 @@ To build the code in the Arduino IDE the following libraries must be installed:
 
 The Waveshare files must be obtained from GitHub at the following [URL](https://github.com/waveshareteam/e-Paper) 
 Copy the following files from the Arduino/epd2in9_V2 directory into the FloodAlert directory:
-
+```
 epd2in9_V2.cpp
 epd2in9_V2.h
 epdif.cpp
@@ -152,15 +152,16 @@ font.16.cpp
 font.20.cpp
 font.24.cpp
 fonts.h
-
+```
 Edit the pin definitions in epdif.h so they are like this:
+```
 // Pin definition
 #define RST_PIN         14
 #define DC_PIN          7
 #define CS_PIN          8
 #define BUSY_PIN        4
 #define PWR_PIN         7
-
+```
 Set your WiFi credentials and flood area code in config.h then compile and upload the code to your Nano IoT. 
 
 ## License
