@@ -126,7 +126,7 @@ The severity level description - derived from severity
 The update date / time - derived from timeRaised (The date and time the warning was last reviewed. Usually (but not always) this leads to a change in the message or severity)
 
 ## Configuration
-User config is in "config.h" Add your WiFi details and Flood Area there.
+User config is in "config.h" Add your WiFi details and Flood Area there. You can also set 3 lines of upto 17 characters to describe the flood area.
 
 ## Demo Mode
 Hold down the Demo button and press the Reset button to enter Demo Mode. Press Reset again to exit back to Standard Mode.

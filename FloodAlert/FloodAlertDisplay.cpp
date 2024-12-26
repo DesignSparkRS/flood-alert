@@ -129,10 +129,6 @@ void FloodAlertDisplay::updateDisplay() {
   _paint.SetHeight(40);
   _paint.SetRotate(ROTATE_180);
 
-  // _paint.Clear(UNCOLORED);
-  // _paint.DrawStringAt(0, 0, "UV Max", &Font16, COLORED);
-  // _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 140, _paint.GetWidth(), _paint.GetHeight());
-
   _paint.Clear(UNCOLORED);
   _paint.DrawStringAt(0, 0, w1[severityLevel], &Font16, COLORED);
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 120, _paint.GetWidth(), _paint.GetHeight());
@@ -145,26 +141,25 @@ void FloodAlertDisplay::updateDisplay() {
   _paint.DrawStringAt(0, 0, w3[severityLevel], &Font16, COLORED);
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 80, _paint.GetWidth(), _paint.GetHeight());
 
-  // _paint.Clear(UNCOLORED);
-  // _paint.DrawStringAt(0, 0, LINE_4, &Font16, COLORED);
-  // _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 60, _paint.GetWidth(), _paint.GetHeight());
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 0, AREA_LINE_1, &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 70, _paint.GetWidth(), _paint.GetHeight());
+
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 0, AREA_LINE_2, &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 60, _paint.GetWidth(), _paint.GetHeight());
+
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 0, AREA_LINE_3, &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 50, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
   _paint.DrawStringAt(0, 0, "Updated", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 40, _paint.GetWidth(), _paint.GetHeight());
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 30, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
   _paint.DrawStringAt(0, 0, (_magnet->warning.time_raised ? _magnet->warning.time_raised : ""), &Font12, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 20, _paint.GetWidth(), _paint.GetHeight());
-
-  // _paint.Clear(UNCOLORED);
-  // _paint.DrawStringAt(0, 0, LINE_7, &Font16, COLORED);
-  // _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 10, _paint.GetWidth(), _paint.GetHeight());
-
-  // Status indicators
-  _paint.SetWidth(120);
-  _paint.SetHeight(40);
-  _paint.SetRotate(ROTATE_180);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 15, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
   if (demoOn) {
