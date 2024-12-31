@@ -30,7 +30,7 @@ void FloodAlertDisplay::showGreeting(void) {
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 140, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
-  _paint.DrawStringAt(0, 4, "  Magnet  ", &Font16, COLORED);
+  _paint.DrawStringAt(0, 4, "  Alert  ", &Font16, COLORED);
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 120, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
