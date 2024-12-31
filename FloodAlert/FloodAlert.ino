@@ -52,7 +52,7 @@ If you make use of this data please acknowledge this with the following attribut
 #define B5_PIN 17
 #define B6_PIN 16
 
-modes mode = STD_MODE;
+modes mode;
 
 const char* soft_version = "1.0.1";
 
@@ -100,18 +100,22 @@ void setup() {
   // Setup display and show greeting
   epd.initDisplay();
   epd.showGreeting();
-
-  myFloodAPI.init();
+  delay(3000);
 
   // Hold down B5 while pressing reset to enter demo mode
   // Press reset to exit back to standard mode
   if (button5.isPressed()) {
     mode = DEMO_MODE;
     rgb_colour(RED);
-    Serial.println("Starting demo mode...");
+    Serial.println("Entering demo mode...");
     doDemo();
+  } else {
+    mode = STD_MODE;
+    rgb_colour(RED);
+    Serial.println("Entering standard mode...");
   }
-  delay(3000);
+  while(1);
+  myFloodAPI.init();
 }
 
 void loop() {
