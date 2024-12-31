@@ -37,12 +37,17 @@ If you make use of this data please acknowledge this with the following attribut
   OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
   SOFTWARE.
 */
+#include <SPI.h>
+#include <WiFiNINA.h>
+#include "config.h"
 
 #include <EasyButton.h>
 #include "FloodAPI.h"
 #include "FloodAlertDisplay.h"
 #include "led.h"
 #include "buzzer.h"
+
+#define WIFI_TIMEOUT_TRIES 3
 
 // Button connections
 #define B1_PIN 21
@@ -68,6 +73,10 @@ EasyButton button3(B3_PIN);
 EasyButton button4(B4_PIN);
 EasyButton button5(B5_PIN);
 EasyButton button6(B6_PIN);
+
+int wifi_status = WL_IDLE_STATUS;
+// char server[] = "www.google.com";    // name (using DNS)
+WiFiSSLClient client;
 
 void setup() {
   led_init();
@@ -112,8 +121,40 @@ void setup() {
     mode = STD_MODE;
     Serial.println("Entering standard mode...");
   }
-  while(1);
+
+  // check for the WiFi module:
+  if (WiFi.status() == WL_NO_MODULE) {
+    Serial.println("Communication with WiFi module failed!");
+    while (1);
+  }
+
+  String fv = WiFi.firmwareVersion();
+  if (fv < WIFI_FIRMWARE_LATEST_VERSION) {
+    Serial.println("Please upgrade the firmware");
+  }
+
+  // attempt to connect to WiFi network:
+  // WiFi.setTimeout(60 * 1000);
+  while (wifi_status != WL_CONNECTED) {
+    static int timeout_counter = 0;
+    Serial.print("Attempting to connect to SSID: ");
+    Serial.println(SECRET_SSID);
+    wifi_status = WiFi.begin(SECRET_SSID, SECRET_PASS);
+    timeout_counter ++;
+
+    // wait 10 seconds for connection:
+    delay(10000);
+    if ((timeout_counter >= WIFI_TIMEOUT_TRIES) && (WiFi.status() != WL_CONNECTED)) {
+      epd.connectionError();
+      buzzer_on();
+      while (1);
+    }
+  }
+  rgb_colour(GREEN);
+  Serial.println("Connected to WiFi");
+  printWiFiStatus();
   myFloodAPI.init();
+  while (1);
 }
 
 void loop() {
@@ -135,14 +176,13 @@ void loop() {
       epd.wifiOn = true;
       Serial.println("Wifi connected...");
       doUpdate();  // Initial update
-    }
-    else {
+    } else {
       epd.connectionError();
     }
   }
   unsigned long now = millis();
   static unsigned long lastApiAttemp = 0;
-  if (WiFi.status() == WL_CONNECTED)  {
+  if (WiFi.status() == WL_CONNECTED) {
     if ((now - lastApiAttemp > ALERT_INTERVAL) || (mode == REPLAY_MODE)) {
       mode = STD_MODE;  // Clear replay
       doUpdate();
@@ -157,8 +197,7 @@ void doUpdate() {
     myFloodAPI.updateState(myFloodAPI.warning.severityLevel);
     epd.updateDisplay();
     printData();
-  } 
-  else {
+  } else {
     epd.apiError();
   }
 }
@@ -242,4 +281,21 @@ void printData() {
 
   Serial.print("Time Raised: ");
   Serial.println(myFloodAPI.warning.time_raised);
+}
+
+void printWiFiStatus() {
+  // print the SSID of the network you're attached to:
+  Serial.print("SSID: ");
+  Serial.println(WiFi.SSID());
+
+  // print your board's IP address:
+  IPAddress ip = WiFi.localIP();
+  Serial.print("IP Address: ");
+  Serial.println(ip);
+
+  // print the received signal strength:
+  long rssi = WiFi.RSSI();
+  Serial.print("signal strength (RSSI):");
+  Serial.print(rssi);
+  Serial.println(" dBm");
 }
