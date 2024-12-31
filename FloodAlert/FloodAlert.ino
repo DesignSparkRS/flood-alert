@@ -170,10 +170,12 @@ void loop() {
     delay(5000);
     rgb_colour(RED);
     epd.wifiOn = false;
+    buzzer_on();
     reconnectWiFi();
     if (WiFi.status() == WL_CONNECTED) {
       rgb_colour(GREEN);
       epd.wifiOn = true;
+      buzzer_off();
       Serial.println("Wifi connected...");
       doUpdate();  // Initial update
     } else {
