@@ -75,8 +75,6 @@ EasyButton button5(B5_PIN);
 EasyButton button6(B6_PIN);
 
 int wifi_status = WL_IDLE_STATUS;
-// char server[] = "www.google.com";    // name (using DNS)
-WiFiSSLClient client;
 
 void setup() {
   led_init();
@@ -151,10 +149,12 @@ void setup() {
     }
   }
   rgb_colour(GREEN);
+  epd.wifiOn = true;
   Serial.println("Connected to WiFi");
   printWiFiStatus();
   myFloodAPI.init();
-  while (1);
+  doUpdate();
+  //while (1);
 }
 
 void loop() {
@@ -195,8 +195,8 @@ void doUpdate() {
   int result = myFloodAPI.getData();
   if (result) {
     myFloodAPI.updateState(myFloodAPI.warning.severityLevel);
-    epd.updateDisplay();
     printData();
+    epd.updateDisplay();
   } else {
     epd.apiError();
   }
