@@ -106,12 +106,10 @@ void setup() {
   // Press reset to exit back to standard mode
   if (button5.isPressed()) {
     mode = DEMO_MODE;
-    rgb_colour(RED);
     Serial.println("Entering demo mode...");
     doDemo();
   } else {
     mode = STD_MODE;
-    rgb_colour(RED);
     Serial.println("Entering standard mode...");
   }
   while(1);
