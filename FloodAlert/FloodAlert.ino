@@ -76,6 +76,9 @@ EasyButton button6(B6_PIN);
 
 int wifi_status = WL_IDLE_STATUS;
 
+static unsigned long now = 0;
+static unsigned long lastApiAttempt = 0;
+
 void setup() {
   led_init();
   buzzer_init();
@@ -153,8 +156,9 @@ void setup() {
   Serial.println("Connected to WiFi");
   printWiFiStatus();
   myFloodAPI.init();
+  now = millis();
+  lastApiAttempt = now;
   doUpdate();
-  //while (1);
 }
 
 void loop() {
@@ -182,13 +186,13 @@ void loop() {
       epd.connectionError();
     }
   }
-  unsigned long now = millis();
-  static unsigned long lastApiAttemp = 0;
+  
+  now = millis();
   if (WiFi.status() == WL_CONNECTED) {
-    if ((now - lastApiAttemp > ALERT_INTERVAL) || (mode == REPLAY_MODE)) {
+    if ((now - lastApiAttempt > ALERT_INTERVAL) || (mode == REPLAY_MODE)) {
       mode = STD_MODE;  // Clear replay
       doUpdate();
-      lastApiAttemp = now;
+      lastApiAttempt = now;
     }
   }
 }
