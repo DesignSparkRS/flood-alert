@@ -1,9 +1,9 @@
 #include "FloodAlertDisplay.h"
 
 // Flood warning text
-static char w1[5][12] = { "No Flood", "DANGER TO", "Flooding is", "Flooding is", "Warning no" };
-static char w2[5][12] = { "Warnings", "LIFE", "Expected", "Possible", "Longer in" };
-static char w3[5][12] = { "", "", "", "", "Force" };
+static char w1[5][12] = { "No Flood", "DANGER TO", "Flooding is", "Flooding is", "Warning" };
+static char w2[5][12] = { "Warnings", "LIFE", "Expected", "Possible", "Removed" };
+static char w3[5][12] = { "", "", "", "", "" };
 
 void FloodAlertDisplay::initDisplay(void) {
   if (_epd.Init() != 0) {
