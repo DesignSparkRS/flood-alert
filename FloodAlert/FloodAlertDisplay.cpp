@@ -27,26 +27,30 @@ void FloodAlertDisplay::showGreeting(void) {
 
   _paint.Clear(UNCOLORED);
   _paint.DrawStringAt(0, 4, "  Flood  ", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 140, _paint.GetWidth(), _paint.GetHeight());
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 160, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
   _paint.DrawStringAt(0, 4, "  Alert  ", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 120, _paint.GetWidth(), _paint.GetHeight());
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 140, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
-  _paint.DrawStringAt(0, 4, "Concept:", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 80, _paint.GetWidth(), _paint.GetHeight());
+  _paint.DrawStringAt(0, 4, "Concept:", &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 100, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
   _paint.DrawStringAt(0, 4, "Jude Pullen", &Font16, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 80, _paint.GetWidth(), _paint.GetHeight());
+
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 4, "Code:", &Font12, COLORED);
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 60, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
-  _paint.DrawStringAt(0, 0, "Code:", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 20, _paint.GetWidth(), _paint.GetHeight());
+  _paint.DrawStringAt(0, 4, "Pete Milne", &Font16, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 40, _paint.GetWidth(), _paint.GetHeight());
 
   _paint.Clear(UNCOLORED);
-  _paint.DrawStringAt(0, 0, "Pete Milne", &Font16, COLORED);
+  _paint.DrawStringAt(0, 4, VERSION, &Font12, COLORED);
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 0, _paint.GetWidth(), _paint.GetHeight());
 
   _epd.DisplayFrame_Partial();

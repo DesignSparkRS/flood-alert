@@ -6,6 +6,7 @@
 #include "epdpaint.h"
 #include "img/rslogo.h"
 #include "config.h"
+#include "version.h"
 
 // Image converter https://javl.github.io/image2cpp/ 
 #include "img/flood_warning_removed.h"    // Level 0

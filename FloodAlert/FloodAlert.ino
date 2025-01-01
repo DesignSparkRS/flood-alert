@@ -46,6 +46,7 @@ If you make use of this data please acknowledge this with the following attribut
 #include "FloodAlertDisplay.h"
 #include "led.h"
 #include "buzzer.h"
+#include "version.h"
 
 #define WIFI_TIMEOUT_TRIES 3
 
@@ -59,7 +60,7 @@ If you make use of this data please acknowledge this with the following attribut
 
 modes mode;
 
-const char* soft_version = "1.1.0";
+const char* soft_version = VERSION;
 
 FloodAPI myFloodAPI = FloodAPI();
 
