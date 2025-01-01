@@ -37,7 +37,6 @@ public:
   int updateState(warning_levels state);
   int sendRequest();
   int getResponse();
-  int getData();
   void demo(modes m);
 };
 
