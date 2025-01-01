@@ -44,7 +44,7 @@ int FloodAPI::updateState(warning_levels state) {
 // Advance through states and wrap around
 void FloodAPI::demo(modes m) {
   // Inject mock timestamp
-  memcpy(warning.time_raised, "2023-01-01 00:01:00", DATESTR_LEN - 1);
+  memcpy(warning.time_raised, "2025-01-01 00:01:00", DATESTR_LEN - 1);
   static warning_levels state = NONE;
   warning.severityLevel = state;
   Serial.println(warning.severityLevel);
