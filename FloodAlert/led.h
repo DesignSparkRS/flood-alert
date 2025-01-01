@@ -64,7 +64,7 @@ static void led_colour(int colour) {
       digitalWrite(L2_AMBER_PIN, LOW);
       digitalWrite(L3_GREEN_PIN, HIGH);
       break;
-    default:  // All off
+    case OFF:  // All off
       digitalWrite(L1_RED_PIN, LOW);
       digitalWrite(L2_AMBER_PIN, LOW);
       digitalWrite(L3_GREEN_PIN, LOW);
@@ -95,6 +95,17 @@ static void led_init() {
   rgb_colour(BLUE);
   delay(500);
   rgb_colour(RED);
+}
+
+static void led_blink(int colour) {
+  static int blink = 1;
+  if (blink) {
+    led_colour(colour);
+    blink = 0;
+  } else {
+    led_colour(OFF);
+    blink = 1;
+  }
 }
 
 #endif

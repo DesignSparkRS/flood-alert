@@ -66,8 +66,6 @@ FloodAPI myFloodAPI = FloodAPI();
 
 FloodAlertDisplay epd = FloodAlertDisplay(&myFloodAPI);
 
-// int status = WL_IDLE_STATUS;
-
 EasyButton button1(B1_PIN);
 EasyButton button2(B2_PIN);
 EasyButton button3(B3_PIN);
@@ -79,6 +77,7 @@ int wifi_status = WL_IDLE_STATUS;
 
 static unsigned long now = 0;
 static unsigned long lastApiAttempt = 0;
+static unsigned long lastBlink = 0;
 
 void setup() {
   led_init();
@@ -86,10 +85,6 @@ void setup() {
 
   // Initialize Serial Port
   Serial.begin(115200);
-  // while (!Serial) {
-  //   ;  // wait for serial port to connect. Needed for native USB port only
-  // }
-  //delay(2000);
 
   Serial.print("Starting client version: ");
   Serial.println(soft_version);
@@ -165,6 +160,7 @@ void setup() {
   myFloodAPI.init();
   now = millis();
   lastApiAttempt = now;
+  lastBlink = now;
   myFloodAPI.sendRequest();
   delay(2000);
 }
@@ -204,8 +200,6 @@ void loop() {
       lastApiAttempt = now;
     }
   }
-  // Check if we need to do an update
-  //doUpdate();
 
   int result = myFloodAPI.getResponse();
   if (result == 1) {
@@ -215,20 +209,14 @@ void loop() {
     epd.apiError();
   }  // else skip
 
+  // Check if we need to do an update
   myFloodAPI.updateState();
-}
 
-// void doUpdate() {
-//   int result = myFloodAPI.getResponse();
-//   if (result == 1) {
-//     myFloodAPI.updateState();
-//     printData();
-//     epd.updateDisplay();
-//   } else if (result == 0) {
-//     epd.apiError();
-//   }
-//   // else skip
-// }
+  if ((now - lastBlink >= 500) && (myFloodAPI.state == SEVERE_FLOOD_WARNING)) {
+    led_blink(RED);
+    lastBlink = now;
+  }
+}
 
 void doDemo() {
   epd.demoOn = true;
@@ -241,11 +229,16 @@ void doDemo() {
     button6.read();
     unsigned long now = millis();
     static unsigned long lastUpdate = 0;
+    static unsigned long lastBlink = 0;
     if (now - lastUpdate > DEMO_INTERVAL) {
       buzzer_off();
       myFloodAPI.demo(DEMO_MODE);
       epd.updateDisplay();
       lastUpdate = millis();
+    }
+    if ((now - lastBlink >= 500) && (myFloodAPI.state == SEVERE_FLOOD_WARNING)) {
+      led_blink(RED);
+      lastBlink = now;
     }
   }
 }

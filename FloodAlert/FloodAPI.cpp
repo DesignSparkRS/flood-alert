@@ -23,7 +23,7 @@ int FloodAPI::updateState() {
         // led_colour(GREEN);
         break;
       case SEVERE_FLOOD_WARNING:
-        led_colour(RED);
+        // led_colour(RED);
         buzzer_on();
         break;
       case FLOOD_WARNING:
@@ -133,6 +133,7 @@ int FloodAPI::getResponse() {
     }
 
     // Update warning struct
+    // warning.severityLevel = SEVERE_FLOOD_WARNING;
     warning.severityLevel = doc["items"]["currentWarning"]["severityLevel"];                                               // 3
     if (warning.severityLevel) {                                                                                           // only update these items if the level is not zero
       memcpy(warning.flood_area_id, doc["items"]["currentWarning"]["floodAreaID"].as<const char*>(), FLOOD_AREA_LEN - 1);  // "Tributaries between Dorchester and ...
