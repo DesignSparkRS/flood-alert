@@ -30,10 +30,13 @@ class FloodAPI {
 public:
   floodWarning warning;  // Flood warning data
   int state;
+  char error_status[64];  // String buffer to hold error status
   FloodAPI();
 public:
   void init();
   int updateState(warning_levels state);
+  int sendRequest();
+  int getResponse();
   int getData();
   void demo(modes m);
 };

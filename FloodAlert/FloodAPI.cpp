@@ -1,5 +1,7 @@
 #include "FloodAPI.h"
 
+WiFiSSLClient client;
+
 // Flood warning data
 //static floodWarning warning;
 FloodAPI::FloodAPI() {
@@ -68,69 +70,85 @@ void FloodAPI::demo(modes m) {
   }
 }
 
-int FloodAPI::getData() {
-  WiFiSSLClient client;
-  // Connect to host
-  Serial.println("Connecting to environment.data.gov.uk");
-  if (!client.connect("environment.data.gov.uk", 443)) {
+int FloodAPI::sendRequest() {
+  if (client.connect("environment.data.gov.uk", 443)) {
+    // Send HTTP request
+    client.println("GET /flood-monitoring/id/floodAreas/" AREA_CODE " HTTP/1.1");
+    client.println("Host: environment.data.gov.uk");
+    client.println("Connection: close");
+    client.println();
+  } else {
     Serial.println("Failed to connect to server");
-    return 1;
-  }
-
-  // Send HTTP request
-  client.println("GET /flood-monitoring/id/floodAreas/" AREA_CODE " HTTP/1.1");
-  client.println("Host: environment.data.gov.uk");
-  client.println("Connection: close");
-  client.println();
-
-  // Check status code
-  char status[32] = { 0 };
-  client.readBytesUntil('\r', status, sizeof(status));
-  // should be "HTTP/1.0 200 OK"
-  Serial.println(status);
-  if (memcmp(status + 9, "200 OK", 6) != 0) {
-    Serial.print("Unexpected HTTP status");
-    Serial.println(status);
-    client.stop();
+    strcpy(error_status, "API request error");
     return 0;
   }
+  return 1;
+}
 
-  // Skip response headers
-  client.find("\r\n\r\n");
+int FloodAPI::getResponse() {
+  char http_response[32] = { 0 };
+  if (client.available()) {
+    // Check status code
+    client.readBytesUntil('\r', http_response, sizeof(http_response));
+    // should be "HTTP/1.0 200 OK"
+    if (memcmp(http_response + 9, "200 OK", 6) != 0) {
+      Serial.print("Unexpected HTTP status");
+      if (error_status[0] == '\0') {
+        strcpy(error_status, "Unexpected HTTP status");
+      } else {
+        strcpy(error_status, http_response);
+        Serial.println(error_status);
+      }
+      client.stop();
+      return 0;
+    }
+    Serial.println(http_response);
 
-  // Stream& input;
-  StaticJsonDocument<128> filter;
+    //   return 1;
+    // }
+    // Skip response headers
+    client.find("\r\n\r\n");
 
-  // Filter data objects so the response fits into memory
-  JsonObject filter_items = filter.createNestedObject("items");
-  filter_items["currentWarning"]["severityLevel"] = true;
-  filter_items["currentWarning"]["floodAreaID"] = true;
-  filter_items["currentWarning"]["timeRaised"] = true;
+    // Stream& input;
+    StaticJsonDocument<128> filter;
 
-  StaticJsonDocument<1024> doc;
+    // Filter data objects so the response fits into memory
+    JsonObject filter_items = filter.createNestedObject("items");
+    filter_items["currentWarning"]["severityLevel"] = true;
+    filter_items["currentWarning"]["floodAreaID"] = true;
+    filter_items["currentWarning"]["timeRaised"] = true;
 
-  DeserializationError error = deserializeJson(doc, client, DeserializationOption::Filter(filter));
+    StaticJsonDocument<1024> doc;
 
-  if (error) {
-    Serial.print("deserializeJson() failed: ");
-    Serial.println(error.c_str());
-    return -1;
-  }
+    DeserializationError error = deserializeJson(doc, client, DeserializationOption::Filter(filter));
 
-  // Update warning struct
-  warning.severityLevel = doc["items"]["currentWarning"]["severityLevel"];                                               // 3
-  if (warning.severityLevel) {                                                                                           // only update these items if the level is not zero
-    memcpy(warning.flood_area_id, doc["items"]["currentWarning"]["floodAreaID"].as<const char*>(), FLOOD_AREA_LEN - 1);  // "Tributaries between Dorchester and ...
+    if (error) {
+      error_status[0] = '\0';
+      strcpy(error_status, "deserializeJson failed");
+      Serial.print("deserializeJson() failed: ");
+      Serial.println(error.c_str());
+      client.stop();
+      return 0;
+    }
 
-    memcpy(warning.time_raised, doc["items"]["currentWarning"]["timeRaised"].as<const char*>(), DATESTR_LEN - 1);  // "2022-12-19T15:20:31"
-    for (int i = 0; i < DATESTR_LEN; i++) {
-      if (warning.time_raised[i] == 'T') {
-        warning.time_raised[i] = ' ';
+    // Update warning struct
+    warning.severityLevel = doc["items"]["currentWarning"]["severityLevel"];                                               // 3
+    if (warning.severityLevel) {                                                                                           // only update these items if the level is not zero
+      memcpy(warning.flood_area_id, doc["items"]["currentWarning"]["floodAreaID"].as<const char*>(), FLOOD_AREA_LEN - 1);  // "Tributaries between Dorchester and ...
+
+      memcpy(warning.time_raised, doc["items"]["currentWarning"]["timeRaised"].as<const char*>(), DATESTR_LEN - 1);  // "2022-12-19T15:20:31"
+      for (int i = 0; i < DATESTR_LEN; i++) {
+        if (warning.time_raised[i] == 'T') {
+          warning.time_raised[i] = ' ';
+        }
       }
     }
-  }
-  // Close the connection to the server
-  client.stop();
+    Serial.println("Disconnecting from server...");
+    client.stop();
 
-  Serial.println("Flood data received!");
+    Serial.println("Flood data received!");
+    return 1;  // Success
+  } else {
+    return -1;  // Skip
+  }
 }

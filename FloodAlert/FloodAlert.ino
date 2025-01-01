@@ -127,7 +127,8 @@ void setup() {
   // check for the WiFi module:
   if (WiFi.status() == WL_NO_MODULE) {
     Serial.println("Communication with WiFi module failed!");
-    while (1);
+    while (1)
+      ;
   }
 
   String fv = WiFi.firmwareVersion();
@@ -142,14 +143,16 @@ void setup() {
     Serial.print("Attempting to connect to SSID: ");
     Serial.println(SECRET_SSID);
     wifi_status = WiFi.begin(SECRET_SSID, SECRET_PASS);
-    timeout_counter ++;
+    timeout_counter++;
 
     // wait 10 seconds for connection:
     delay(10000);
     if ((timeout_counter >= WIFI_TIMEOUT_TRIES) && (WiFi.status() != WL_CONNECTED)) {
-      epd.connectionError();
+      strcpy(myFloodAPI.error_status, "Wifi connection error");
+      epd.apiError();
       buzzer_on();
-      while (1);
+      while (1)
+        ;
     }
   }
   rgb_colour(GREEN);
@@ -159,7 +162,8 @@ void setup() {
   myFloodAPI.init();
   now = millis();
   lastApiAttempt = now;
-  doUpdate();
+  myFloodAPI.sendRequest();
+  delay(2000);
 }
 
 void loop() {
@@ -182,31 +186,35 @@ void loop() {
       epd.wifiOn = true;
       buzzer_off();
       Serial.println("Wifi connected...");
-      doUpdate();  // Initial update
+      myFloodAPI.sendRequest();
     } else {
-      epd.connectionError();
+      strcpy(myFloodAPI.error_status, "Wifi connection error");
+      epd.apiError();
     }
   }
-  
+
   now = millis();
   if (WiFi.status() == WL_CONNECTED) {
     if ((now - lastApiAttempt > ALERT_INTERVAL) || (mode == REPLAY_MODE)) {
       mode = STD_MODE;  // Clear replay
-      doUpdate();
+      myFloodAPI.sendRequest();
       lastApiAttempt = now;
     }
   }
+  // Check if we need to do an update
+  doUpdate();
 }
 
 void doUpdate() {
-  int result = myFloodAPI.getData();
-  if (result) {
+  int result = myFloodAPI.getResponse();
+  if (result == 1) {
     myFloodAPI.updateState(myFloodAPI.warning.severityLevel);
     printData();
     epd.updateDisplay();
-  } else {
+  } else if (result == 0) {
     epd.apiError();
   }
+  // else skip
 }
 
 void doDemo() {

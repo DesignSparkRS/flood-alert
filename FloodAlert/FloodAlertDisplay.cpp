@@ -6,6 +6,7 @@ static char w2[5][12] = { "Warnings", "LIFE", "Expected", "Possible", "Removed" 
 static char w3[5][12] = { "", "", "", "", "" };
 
 void FloodAlertDisplay::initDisplay(void) {
+  Serial.println("Initialising display...");
   if (_epd.Init() != 0) {
     return;
   }
@@ -21,6 +22,7 @@ void FloodAlertDisplay::initDisplay(void) {
 }
 
 void FloodAlertDisplay::showGreeting(void) {
+  Serial.println("Displaying greeting screen...");
   _paint.SetWidth(120);
   _paint.SetHeight(32);
   _paint.SetRotate(ROTATE_180);
@@ -56,23 +58,24 @@ void FloodAlertDisplay::showGreeting(void) {
   _epd.DisplayFrame_Partial();
 }
 
-void FloodAlertDisplay::connectionError(void) {
-  _paint.SetWidth(120);
-  _paint.SetHeight(32);
-  _paint.SetRotate(ROTATE_180);
-
-  _paint.Clear(UNCOLORED);
-  _paint.DrawStringAt(0, 4, "Connection", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 140, _paint.GetWidth(), _paint.GetHeight());
-
-  _paint.Clear(UNCOLORED);
-  _paint.DrawStringAt(0, 4, "Error", &Font16, COLORED);
-  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 120, _paint.GetWidth(), _paint.GetHeight());
-
-  _epd.DisplayFrame_Partial();
-}
-
 void FloodAlertDisplay::apiError(void) {
+  Serial.println("Displaying error screen...");
+  char lines[4][17] = { { 0 } };  // 4 lines of 16 characters each + 1 for null-terminator
+  int i, j;
+
+  // Fill the 4 lines
+  for (i = 0; i < 4; i++) {
+    for (j = 0; j < 16; j++) {
+      int index = i * 16 + j;  // Calculate the index in array 'error_status'
+      if (index < strlen(_magnet->error_status)) {
+        lines[i][j] = _magnet->error_status[index];  // Copy character from 'error_status'
+      } else {
+        lines[i][j] = ' ';  // Pad with space if 'error_status' is exhausted
+      }
+    }
+    lines[i][16] = '\0';  // Null-terminate each line
+  }
+
   _paint.SetWidth(120);
   _paint.SetHeight(32);
   _paint.SetRotate(ROTATE_180);
@@ -85,11 +88,27 @@ void FloodAlertDisplay::apiError(void) {
   _paint.DrawStringAt(0, 4, "Error", &Font16, COLORED);
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 120, _paint.GetWidth(), _paint.GetHeight());
 
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 4, lines[0], &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 80, _paint.GetWidth(), _paint.GetHeight());
+
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 4, lines[1], &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 60, _paint.GetWidth(), _paint.GetHeight());
+
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 4, lines[2], &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 40, _paint.GetWidth(), _paint.GetHeight());
+
+  _paint.Clear(UNCOLORED);
+  _paint.DrawStringAt(0, 4, lines[3], &Font12, COLORED);
+  _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 20, _paint.GetWidth(), _paint.GetHeight());
+
   _epd.DisplayFrame_Partial();
 }
 
 void FloodAlertDisplay::updateDisplay() {
-  Serial.println("Updating display...");
+  Serial.println("Updating status screen...");
   int severityLevel = _magnet->warning.severityLevel;
   // Index warning string based on severity level
   //int warning_idx = severityLevel ? severityLevel : 0;

@@ -33,7 +33,6 @@ class FloodAlertDisplay {
   void initDisplay(void);
   void updateDisplay(void);
   void showGreeting(void);
-  void connectionError(void);
   void apiError(void);
 };
 
