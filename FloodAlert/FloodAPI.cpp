@@ -11,9 +11,10 @@ void FloodAPI::init() {
   state = INIT;
 }
 
-int FloodAPI::updateState(warning_levels state) {
-  static warning_levels previous_state = INIT;
-  // static warning_levels previous_state = NONE;
+int FloodAPI::updateState() {
+  // static warning_levels previous_state = INIT;
+  static warning_levels previous_state = NONE;
+  state = warning.severityLevel;
   if (state != previous_state) {
     previous_state = state;
     switch (state) {
@@ -50,7 +51,7 @@ void FloodAPI::demo(modes m) {
   static warning_levels state = NONE;
   warning.severityLevel = state;
   Serial.println(warning.severityLevel);
-  updateState(warning.severityLevel);
+  updateState();
   switch (state) {
     case NONE:
       state = FLOOD_ALERT;

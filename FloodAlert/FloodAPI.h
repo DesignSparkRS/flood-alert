@@ -10,15 +10,16 @@
 #define DATESTR_LEN 17     // "2022-12-19T15:20:31" -> "2022-12-19 15:20"
 #define FLOOD_AREA_LEN 20  // Flood area description
 
-enum warning_levels { INIT = -1,
+typedef enum { INIT = -1,
                       NONE,
                       SEVERE_FLOOD_WARNING,
                       FLOOD_WARNING,
                       FLOOD_ALERT,
-                      NO_LONGER };
-enum modes { DEMO_MODE,
+                      NO_LONGER } warning_levels;
+
+typedef enum { DEMO_MODE,
              STD_MODE,
-             REPLAY_MODE };
+             REPLAY_MODE } modes;
 
 struct floodWarning {
   char time_raised[DATESTR_LEN] = { '\0' };
@@ -29,12 +30,13 @@ struct floodWarning {
 class FloodAPI {
 public:
   floodWarning warning;  // Flood warning data
-  int state;
+  warning_levels state;
   char error_status[64];  // String buffer to hold error status
   FloodAPI();
 public:
   void init();
-  int updateState(warning_levels state);
+  void doUpdate();
+  int updateState();
   int sendRequest();
   int getResponse();
   void demo(modes m);

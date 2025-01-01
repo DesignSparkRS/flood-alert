@@ -89,7 +89,7 @@ void setup() {
   // while (!Serial) {
   //   ;  // wait for serial port to connect. Needed for native USB port only
   // }
-  delay(2000);
+  //delay(2000);
 
   Serial.print("Starting client version: ");
   Serial.println(soft_version);
@@ -105,6 +105,7 @@ void setup() {
   button4.onPressed(replay);
   button4.onPressedFor(2000, buzzer_off);  // Cancel buzzer
   button5.begin();
+  button5.onPressed(doDemo);
   button6.begin();
   button6.onPressed(clock_sync_ap_mode);  // Place holder
 
@@ -115,9 +116,11 @@ void setup() {
 
   // Hold down B5 while pressing reset to enter demo mode
   // Press reset to exit back to standard mode
+  button5.read();
   if (button5.isPressed()) {
     mode = DEMO_MODE;
     Serial.println("Entering demo mode...");
+    epd.demoOn = true;
     doDemo();
   } else {
     mode = STD_MODE;
@@ -202,20 +205,30 @@ void loop() {
     }
   }
   // Check if we need to do an update
-  doUpdate();
-}
+  //doUpdate();
 
-void doUpdate() {
   int result = myFloodAPI.getResponse();
   if (result == 1) {
-    myFloodAPI.updateState(myFloodAPI.warning.severityLevel);
     printData();
     epd.updateDisplay();
   } else if (result == 0) {
     epd.apiError();
-  }
-  // else skip
+  }  // else skip
+
+  myFloodAPI.updateState();
 }
+
+// void doUpdate() {
+//   int result = myFloodAPI.getResponse();
+//   if (result == 1) {
+//     myFloodAPI.updateState();
+//     printData();
+//     epd.updateDisplay();
+//   } else if (result == 0) {
+//     epd.apiError();
+//   }
+//   // else skip
+// }
 
 void doDemo() {
   epd.demoOn = true;

@@ -186,7 +186,7 @@ void FloodAlertDisplay::updateDisplay() {
 
   _paint.Clear(UNCOLORED);
   if (demoOn) {
-    _paint.DrawStringAt(0, 4, "", &Font12, COLORED);
+    _paint.DrawStringAt(0, 4, "Demo", &Font12, COLORED);
   } else if (wifiOn) {
     _paint.DrawStringAt(0, 4, "Wifi", &Font12, COLORED);
   } else {
