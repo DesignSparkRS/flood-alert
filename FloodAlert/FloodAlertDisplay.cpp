@@ -167,11 +167,11 @@ void FloodAlertDisplay::updateDisplay() {
 
   _paint.Clear(UNCOLORED);
   if (demoOn) {
-    _paint.DrawStringAt(0, 0, "", &Font16, COLORED);
+    _paint.DrawStringAt(0, 4, "", &Font12, COLORED);
   } else if (wifiOn) {
-    _paint.DrawStringAt(0, 0, "Wifi", &Font16, COLORED);
+    _paint.DrawStringAt(0, 4, "Wifi", &Font12, COLORED);
   } else {
-    _paint.DrawStringAt(0, 0, "", &Font16, COLORED);
+    _paint.DrawStringAt(0, 4, "", &Font12, COLORED);
   }
   _epd.SetFrameMemory_Partial(_paint.GetImage(), 0, 0, _paint.GetWidth(), _paint.GetHeight());
 
