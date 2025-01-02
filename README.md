@@ -1,6 +1,6 @@
 # flood-alert
 Arduino Nano IoT Flood Alert device
-![Flood Alert Device](flood_alert_device.jpg).
+![Flood Alert Device](flood_alert_keswick_campsite.jpg).
 
 Flood Alert Circuit
 ![Flood Alert Circuit Diagram](fritzing/flood_alert_bb.jpg).
