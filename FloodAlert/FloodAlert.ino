@@ -178,12 +178,12 @@ void loop() {
     delay(5000);
     rgb_colour(RED);
     epd.wifiOn = false;
-    buzzer_on();
+    // buzzer_on();
     reconnectWiFi();
     if (WiFi.status() == WL_CONNECTED) {
       rgb_colour(GREEN);
       epd.wifiOn = true;
-      buzzer_off();
+      // buzzer_off();
       Serial.println("Wifi connected...");
       myFloodAPI.sendRequest();
     } else {
@@ -255,6 +255,7 @@ int reconnectWiFi() {
   WiFi.disconnect();  // Force a disconnect
   delay(1000);
   WiFi.begin(SECRET_SSID, SECRET_PASS);
+  delay(10000);
   Serial.print("Wifi status: ");
   Serial.println(WiFi.status());
   return WiFi.status();
